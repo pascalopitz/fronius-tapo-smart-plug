@@ -25,12 +25,12 @@ async def main():
     p100.login()
     info = p100.getDeviceInfo()
     status = info['result']['device_on']
-    threshold = float(os.getenv('SURPLUS_THRESHOLD'))
-    grid_pull_max = float(os.getenv('GRID_PULL_THRESHOLD'))
+    on_threshold = float(os.getenv('DEVICE_WATTAGE')) - float(os.getenv('GRID_PULL_WATTAGE_MAX')) 
+    off_threshold = float(os.getenv('GRID_PULL_WATTAGE_MAX'))
 
     while True:
         [grid_pull, surplus] = get_grid_consumption()
-        new_status = (status == True and grid_pull < grid_pull_max) or (status == False and surplus > threshold)
+        new_status = (status == True and grid_pull < off_threshold) or (status == False and surplus > on_threshold)
 
         if status != new_status:
             if new_status == False:

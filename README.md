@@ -2,8 +2,8 @@
 
 Fronius Smart Meter and Tapo P100 = Only running when the sun is shining and we have enough spare juice
 
-Define a surplus threshold and point at your Tapo P100 Socket and Fronius Smart Meter.
-The socket will then be switched on and off depending on whether the available solar surplus threshold is met.
+Define an estimated power consumtion, a max gird pull threshold and point the scripr at your Tapo P100 Socket and Fronius Smart Meter.
+The socket will then be switched on and off depending on whether the available solar surplus threshold is met or the grid pull exceeded.
 Useful for running a device like a heater.
  
 ## Prerequisites
