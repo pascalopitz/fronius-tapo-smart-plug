@@ -11,12 +11,12 @@ def get_grid_consumption():
     url = 'http://{ip}/solar_api/v1/GetPowerFlowRealtimeData.fcgi'.format( ip=os.getenv('FRONIUS_IP') )
     f = request.urlopen(url)
     s = json.loads(f.read().decode('utf-8'))
-    consumption = float(s['Body']['Data']['Site']['P_Grid'])
+    grid_pull = float(s['Body']['Data']['Site']['P_Grid'])
     pv = float(s['Body']['Data']['Site']['P_PV'])
     load = float(s['Body']['Data']['Site']['P_Load'])
     surplus = pv + load
-    print('pv={pv}, load={load}, surplus={surplus}'.format( pv=pv, load=load, surplus=surplus ))
-    return [consumption, surplus]
+    print('pv={pv}, load={load}, surplus={surplus}, grid_pull={grid_pull}'.format( pv=pv, load=load, surplus=surplus, grid_pull=grid_pull ))
+    return [grid_pull, surplus]
 
 
 async def main():
@@ -26,10 +26,11 @@ async def main():
     info = p100.getDeviceInfo()
     status = info['result']['device_on']
     threshold = float(os.getenv('SURPLUS_THRESHOLD'))
+    grid_pull_max = float(os.getenv('GRID_PULL_THRESHOLD'))
 
     while True:
-        [consumption, surplus] = get_grid_consumption()
-        new_status = consumption < 0 and surplus > threshold
+        [grid_pull, surplus] = get_grid_consumption()
+        new_status = (status == True and grid_pull < grid_pull_max) or (status == False and surplus > threshold)
 
         if status != new_status:
             if new_status == False:
